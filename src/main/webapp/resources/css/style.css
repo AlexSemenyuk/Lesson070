@@ -1,0 +1,229 @@
+/* Common */
+:root {
+    /* text color */
+    --color-text-primary: rgba(0, 0, 0, 1);
+    --color-text-secondary: rgba(255, 255, 255, 1);
+
+    /* background */
+    --color-background-body: rgb(210, 210, 210, 1);
+    --color-background-task: rgb(70, 70, 70, 1);
+    --color-background-tbody-odd: rgb(245, 245, 245, 1);
+    --color-background-tbody-honest: rgb(230, 230, 230, 1);
+
+
+    /* text */
+    --text-primary: "Arial", sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-background-body);
+}
+
+main.container {
+    display: grid;
+    grid-template-columns: 25% 50%;
+    padding: 0;
+    margin: 0;
+}
+
+.addtask {
+    margin: 10px;
+    border: 2px solid var(--color-background-task);
+    border-radius: 10px;
+}
+
+input, select {
+    background-color: var(--color-text-secondary);
+}
+
+.reg {
+    margin: 3%;
+}
+
+.h {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#name,
+#description {
+    font-size: 0.8rem;
+    padding: 8px 10px 8px 10px;
+    height: 2.5em;
+    /*line-height: 1.2em;*/
+    text-indent: 0.5em;
+    margin-bottom: 10px;
+}
+
+#deadline {
+    font-size: 0.8rem;
+    padding: 8px 15% 8px 10px;
+    height: 2.5em;
+    /*line-height: 1.2em;*/
+    text-indent: 0.5em;
+    margin-bottom: 10px;
+}
+
+#category,
+#priority {
+    font-size: 0.8rem;
+    padding: 8px 10px 8px 10px;
+    height: 2.5em;
+    /*line-height: 1.2em;*/
+    text-indent: 0.5em;
+    margin-bottom: 10px;
+}
+
+.label-input {
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 400;
+}
+
+input.but-submit,
+.but-done {
+    width: 60%;
+    font-size: 0.8rem;
+    padding: 2px 10px 2px 10px;
+    height: 2em;
+    /*line-height: 1.2em;*/
+    text-indent: 0.5em;
+    margin: 20px 20% 20px 20%;
+}
+
+
+div.task {
+    padding: 2%;
+    width: 94%;
+    background-color: var(--color-text-secondary);
+    border: 2px solid var(--color-background-task);
+    border-radius: 10px;
+    margin: 3%;
+    display: grid;
+    grid-template-areas: "name name made del"
+                         "dea main main main"
+                         "cat main main main"
+                         "pri main main main";
+    /*grid-template-rows: 1fr 1fr 1fr;*/
+    grid-template-columns: 25% 45% 15% 15%;
+}
+
+.sort-task {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 53% auto;
+    margin: 10px 5% 0 5%;
+}
+
+.sort-task > h2 {
+    /*margin-left: 5%;*/
+    margin-bottom: 0;
+    text-align: left;
+    text-indent: 1em;
+}
+
+.sort-cont {
+    /*width: 100%;*/
+    line-height: 40px;
+}
+
+form.sort-form {
+    display: grid;
+    grid-template-columns: 58% 20%;
+    margin: 0 0 0 0;
+}
+
+.sort-form > .label-input {
+    margin: 0;
+}
+
+input.but-sort {
+    /*width: 60%;*/
+    font-size: 0.8rem;
+    padding: 5px 0px 5px 0px;
+    height: 2.6em;
+    text-align: center;
+    /*line-height: 1.2em;*/
+    /*text-indent: 0.5em;*/
+    margin: 0px;
+
+}
+
+select#sort {
+    width: 150px;
+    margin: 0 0px 0px 0px;
+    font-size: 0.8rem;
+    padding: 8px 10px 8px 10px;
+    height: 2.7em;
+    /*line-height: 56px;*/
+    text-indent: 0.5em;
+}
+
+ul.list {
+
+}
+
+ul li {
+    list-style: none;
+}
+
+
+.itemname {
+    grid-area: name;
+    color: var(--color-text-primary);
+    font-weight: 700;
+    text-indent: 0.5em;
+    line-height: 1.1em;
+}
+
+.itemcategogy {
+    grid-area: cat;
+    font-size: 14px;
+    line-height: 1.1em;
+    text-indent: 1em;
+}
+
+.itemdeadline {
+    grid-area: dea;
+    font-size: 14px;
+    line-height: 1.1em;
+    text-indent: 1em;
+}
+
+.itempriority {
+    grid-area: pri;
+    font-size: 14px;
+    text-indent: 1em;
+    line-height: 1.1em;
+}
+
+
+.itemdescript {
+    grid-area: main;
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 700;
+    text-indent: 0.5em;
+    position: sticky;
+}
+
+.button-delete {
+    grid-area: del;
+    font-size: 14px;
+    padding: 3px;
+    margin-left: 10px;
+}
+
+.button-cond {
+    grid-area: made;
+    font-size: 14px;
+    padding: 3px;
+}

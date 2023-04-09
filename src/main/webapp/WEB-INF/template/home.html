@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Reminder</title>
+    <link rel='stylesheet' href="resources/css/pico.min.css">
+    <link rel='stylesheet' href="resources/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+</head>
+<body>
+<main class='container'>
+    <div>
+        <div class='addtask'>
+            <h2 class="h">Your new task</h2>
+            <form method="post">
+                <div class="reg">
+                    <label class="label-input" for="name">Name</label>
+                    <input class="input-text" id="name" type="text" name="name" placeholder="Input task's name"/>
+                </div>
+                <div class="reg">
+                    <label class="label-input" for="description">Description</label>
+                    <input class="input-text" id="description" type="text" name="description"
+                           placeholder="Input task's description"/>
+                </div>
+                <div class="reg">
+                    <label class="label-input" for="category">Category</label>
+                    <select id="category" name="category">
+                        <option value="House">House</option>
+                        <option value="Work">Work</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Shopping">Shopping</option>
+                    </select>
+                </div>
+                <div class="reg">
+                    <label class="label-input" for="deadline">Deadline</label>
+                    <input id="deadline" type="date" name="deadline" placeholder="Input task's deadline"/>
+                </div>
+                <div class="reg">
+                    <label for="priority">Category</label>
+                    <select id="priority" name="priority">
+                        <option value="Low">Low</option>
+                        <option value="Normal">Normal</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <input class="but-submit" type="submit" value="Submit"/>
+            </form>
+        </div>
+        <div>
+            <a class='but-done' role='button' href='/Lesson070/done'>Done</a>
+        </div>
+    </div>
+    <div class='tasks'>
+        <div class='sort-task'>
+            <h2 class="h">Your task's list</h2>
+            <div class="sort-cont">
+                <form class="sort-form" method="post">
+                    <select id="sort" name="sort">
+                        <option value="Category">Category</option>
+                        <option value="Deadline">Deadline</option>
+                        <option value="Priority">Priority</option>
+                    </select>
+                    <input class="but-sort" type="submit" value="Sort"/>
+                </form>
+            </div>
+        </div>
+        %s
+    </div>
+</main>
+</body>
+</html>
