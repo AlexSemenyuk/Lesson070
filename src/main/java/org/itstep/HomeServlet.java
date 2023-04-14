@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,7 +20,9 @@ import java.util.stream.Collectors;
 //@WebServlet(name = "home", urlPatterns = "/")
 public class HomeServlet extends HttpServlet {
     private static SimpleDateFormat dateTemplate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    private static File file = new File("e:\\JAVA\\Projects\\GitHub Homeworks\\Lesson070\\src\\main\\webapp\\resources\\db\\tasks.db");
+    private static File file = new File("e:\\JAVA\\Projects\\GitHub Homeworks\\Lesson070\\src\\main\\webapp\\WEB-INF\\db\\tasks.db");
+
+    private static String path = "\\WEB-INF\\db\\tasks.db";
 
     private List<Task> tasks = new CopyOnWriteArrayList<>();
 
@@ -57,10 +62,10 @@ public class HomeServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
         // Запись в файл
-        writeInFile();
+        writeInFile(file);
     }
 
-    private void writeInFile() {
+    private void writeInFile(File file) {
         // Запись в файл
         if (file.exists()) {
             file.delete();
@@ -73,11 +78,46 @@ public class HomeServlet extends HttpServlet {
         }
     }
 
-    private void readFromFile() {
+    private void writeInFile(HttpServletRequest req, String path) throws MalformedURLException {
+        ServletContext servletContext = req.getServletContext();
+        URL url = servletContext.getResource(path);
+        System.out.println("url = " + url);
+        String pathWrite = url.toString().substring(6);
+        System.out.println("pathWrite = " + pathWrite);
+        // Запись в файл
+        File fileWrite = new File(pathWrite);
+        System.out.println("fileWrite.exists() = " + fileWrite.exists());
+        if (fileWrite.exists()) {
+            fileWrite.delete();
+        }
+        try (OutputStream out = new FileOutputStream(fileWrite);
+             ObjectOutputStream objectOut = new ObjectOutputStream(out)) {
+            objectOut.writeObject(tasks);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private void readFromFile(HttpServletRequest req, String path) throws MalformedURLException {
         tasks = null;
-        System.out.println(file.exists());
-        if (file.exists()) {
-            try (InputStream in = new FileInputStream(file);
+        ServletContext servletContext = req.getServletContext();
+        URL url = servletContext.getResource(path);
+        System.out.println("url = " + url);
+        String pathRead = url.toString().substring(6);
+        System.out.println("pathRead = " + pathRead);
+
+//        try (var in = servletContext.getResourceAsStream(path);           // не работает
+//             ObjectInputStream objectInput = new ObjectInputStream(in)) {
+//            tasks = (List<Task>) objectInput.readObject();
+//        } catch (IOException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+        File fileRead = new File(pathRead);
+        System.out.println("fileRead.exists() = " + fileRead.exists());
+
+        if (fileRead.exists()) {
+            try (InputStream in = new FileInputStream(fileRead);
                  ObjectInputStream objectInput = new ObjectInputStream(in)) {
                 tasks = (List<Task>) objectInput.readObject();
             } catch (IOException | ClassNotFoundException e) {
@@ -94,15 +134,23 @@ public class HomeServlet extends HttpServlet {
         System.out.println("delete = " + delete);
         if (delete != null && !delete.isBlank()) {
             // Считывание с файла
-            readFromFile();
+            readFromFile(req, path);
             // Удаление со списка
             for (int i = 0; i < tasks.size(); i++) {
                 if (tasks.get(i).getId() == Integer.parseInt(delete)) {
+                    System.out.println("delete tsk with id = " + tasks.get(i).getId());
                     tasks.remove(tasks.get(i));
+
                 }
             }
+            System.out.println("HomeServlet: after delete");
+            if (tasks != null) {
+                tasks.stream().forEach(task -> {
+                    System.out.println(task.toString());
+                });
+            }
             // Запись в файл
-            writeInFile();
+            writeInFile(req, path);
         }
 
         // 4. Изменение condition (состояние)
@@ -110,7 +158,7 @@ public class HomeServlet extends HttpServlet {
         System.out.println("conditionHome = " + condition);
         if (condition != null && !condition.isBlank()) {
             // Считывание с файла
-            readFromFile();
+            readFromFile(req, path);
             // Изменение состояния на Done
             for (int i = 0; i < tasks.size(); i++) {
                 if (tasks.get(i).getId() == Integer.parseInt(condition)) {
@@ -118,34 +166,22 @@ public class HomeServlet extends HttpServlet {
                 }
             }
             // Запись в файл
-            writeInFile();
+            writeInFile(req, path);
         }
-
-//        // 5. Запись в файл
-////        File file = new File("e:\\JAVA\\Projects\\GitHub Homeworks\\Lesson070\\src\\main\\webapp\\resources\\db\\tasks.db");
-//        File file = new File("e:\\JAVA\\Projects\\GitHub Homeworks\\Lesson070\\src\\main\\webapp\\resources\\db\\tasks.db");
-//        if (file.exists()) {
-//            file.delete();
-//        }
-//        try (OutputStream out = new FileOutputStream(file);
-//             ObjectOutputStream objectOut = new ObjectOutputStream(out)) {
-//            objectOut.writeObject(tasks);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
 
 
         // 5. Вывод HTML
         resp.setContentType("text/html");
         resp.setCharacterEncoding("utf-8");
         // Считывание с файла
-        readFromFile();
-//        System.out.println("HomeServlet");
-//        if (tasks != null) {
-//            tasks.stream().forEach(task -> {
-//                System.out.println(task.toString());
-//            });
-//        }
+        readFromFile(req, path);
+
+        System.out.println("HomeServlet");
+        if (tasks != null) {
+            tasks.stream().forEach(task -> {
+                System.out.println(task.toString());
+            });
+        }
 
         // Отбор tasks соответствующих Active
         List<Task> tasksActive = new CopyOnWriteArrayList<>();
@@ -165,7 +201,8 @@ public class HomeServlet extends HttpServlet {
         writer.printf(TEMPLATE, tasksActiveString);
     }
 
-
+    //
+//
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -176,11 +213,11 @@ public class HomeServlet extends HttpServlet {
         String categoryTMP = req.getParameter("category");
         String deadline = req.getParameter("deadline");
         String priorityTMP = req.getParameter("priority");
-//        System.out.println("name = " + name);
-//        System.out.println("description = " + description);
-//        System.out.println("categoryTMP = " + categoryTMP);
-//        System.out.println("deadline = " + deadline);
-//        System.out.println("priorityTMP = " + priorityTMP);
+        System.out.println("name = " + name);
+        System.out.println("description = " + description);
+        System.out.println("categoryTMP = " + categoryTMP);
+        System.out.println("deadline = " + deadline);
+        System.out.println("priorityTMP = " + priorityTMP);
 
         if (name != null && !name.isBlank() &&
             description != null && !description.isBlank() &&
@@ -207,7 +244,7 @@ public class HomeServlet extends HttpServlet {
 //            System.out.println("priority = " + priority.toString());
 
             // Считывание с файла
-            readFromFile();
+            readFromFile(req, path);
 
             // Добавление нового task в tasks
             try {
@@ -217,7 +254,7 @@ public class HomeServlet extends HttpServlet {
             }
 
             // Запись в файл
-            writeInFile();
+            writeInFile(req, path);
         }
 
 
@@ -226,7 +263,7 @@ public class HomeServlet extends HttpServlet {
         System.out.println("sort = " + sort);
         if (sort != null && !sort.isBlank()) {
             // Считывание с файла
-            readFromFile();
+            readFromFile(req, path);
 
             // Сортировка
             switch (sort) {
@@ -240,7 +277,7 @@ public class HomeServlet extends HttpServlet {
             }
 
             // Запись в файл
-            writeInFile();
+            writeInFile(req, path);
 
         }
 
